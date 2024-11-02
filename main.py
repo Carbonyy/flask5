@@ -1,8 +1,7 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from werkzeug.security import generate_password_hash
 from database import app, User, db, News
 from stats import professions_data
-
 
 @app.route('/')
 @app.route('/index')
@@ -79,6 +78,86 @@ def news_detail(news_id):
     author = User.query.get(news_item.author_id)
     return render_template('news_item.html', news_item=news_item, author=author)
 
+
+@app.route('/api/users', methods=['GET'])
+def get_users():
+    users = User.query.all()
+    result = []
+    for user in users:
+        user_data = {
+            'id': user.id,
+            'login_email': user.login_email,
+            'surname': user.surname,
+            'name': user.name,
+            'age': user.age,
+            'speciality': user.speciality,
+            'address': user.address
+        }
+        result.append(user_data)
+    return jsonify(result)
+
+@app.route('/api/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    user = User.query.get_or_404(user_id)
+    user_data = {
+        'id': user.id,
+        'login_email': user.login_email,
+        'surname': user.surname,
+        'name': user.name,
+        'age': user.age,
+        'speciality': user.speciality,
+        'address': user.address
+    }
+    return jsonify(user_data)
+
+@app.route('/api/users', methods=['POST'])
+def add_user():
+    data = request.get_json()
+    login_email = data.get('login_email')
+    password = data.get('password')
+    surname = data.get('surname')
+    name = data.get('name')
+    age = data.get('age')
+    speciality = data.get('speciality')
+    address = data.get('address')
+
+    new_user = User(
+        login_email=login_email,
+        password=password,
+        surname=surname,
+        name=name,
+        age=age,
+        speciality=speciality,
+        address=address
+    )
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message': 'Пользователь успешно добавлен!'}), 201
+
+@app.route('/api/users/<int:user_id>', methods=['PUT'])
+def edit_user(user_id):
+    user = User.query.get_or_404(user_id)
+    data = request.get_json()
+
+    user.login_email = data.get('login_email', user.login_email)
+    user.password = data.get('password', user.password)
+    user.surname = data.get('surname', user.surname)
+    user.name = data.get('name', user.name)
+    user.age = data.get('age', user.age)
+    user.speciality = data.get('speciality', user.speciality)
+    user.address = data.get('address', user.address)
+
+    db.session.commit()
+
+    return jsonify({'message': 'Пользователь успешно обновлен!'})
+
+@app.route('/api/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({'message': 'Пользователь успешно удален!'})
 
 if __name__ == '__main__':
     app.run(debug=False)
