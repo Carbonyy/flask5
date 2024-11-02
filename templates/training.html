@@ -1,0 +1,40 @@
+<!-- training.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .center-block {
+        text-align: center;
+        color: white;
+    }
+
+    .center-block img {
+        max-width: 50%;
+        height: auto;
+        border-radius: 10px;
+    }
+
+    .stats {
+        margin-top: 20px;
+        font-size: 18px;
+    }
+
+    .stats div {
+        margin: 5px 0;
+    }
+</style>
+<div class="center-block">
+    <h2 class="mt-3">{{ header }}</h2>
+    <img src="{{ url_for('static', filename=image_url) }}" alt="{{ header }}" class="img-fluid">
+
+    <div class="stats" style="color:black;">
+        <div>HP: {{ hp }}</div>
+        <div>Mana: {{ mana }}</div>
+        <div>Level: {{ level }}</div>
+        <div>Experience: {{ experience }}</div>
+        <div>Strength: {{ strength }}</div>
+        <div>Stamina: {{ stamina }}</div>
+        <div>Agility: {{ agility }}</div>
+    </div>
+</div>
+{% endblock %}
