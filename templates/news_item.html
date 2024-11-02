@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="container mt-5">
+    <h2>{{ news_item.title }}</h2>
+    <p><strong>Дата создания новости: {{ format_datetime(news_item.date_of_create, format='d MMMM yyyy') }}</strong></p>
+    <p><strong>Автор: {{ author.name }} {{ author.surname }}</strong></p>
+    <p>{{ news_item.content }}</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Назад к новостям</a>
+</main>
+{% endblock %}

@@ -1,23 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<style>
-    .center-block {
-            text-align: center;
-            margin-top: 50px;
-            color: white;
-        }
-
-        .center-block img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-        }
-</style>
 <main class="container mt-5">
-    <div class="center-block">
-        <img src="{{ url_for('static', filename='img/doom_mount.jpg') }}" alt="Цель" class="img-fluid">
-        <h2 class="mt-3" style="color:black;">Место, к которому мы стремимся.</h2>
+
+    <div class="row mt-4">
+        {% for news_item, author in news %}
+        <div class="col-md-4 mb-4">
+            <div class="card news-card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ news_item.title }}</h5>
+                    <p class="card-text">{{ news_item.content[:100] }}...</p>
+                    <p class="text-muted">Дата: {{ format_datetime(news_item.date_of_create, format='d MMMM yyyy') }}</p>
+                    <p>Автор: {{ author.name }} {{ author.surname }}</p>
+                    <a href="{{ url_for('news_detail', news_id=news_item.id) }}" class="btn btn-primary">Читать далее</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </main>
 {% endblock %}
